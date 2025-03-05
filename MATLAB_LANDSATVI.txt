@@ -1,0 +1,206 @@
+
+[fileName, filePath] = uigetfile('*.tif', '选择 TIF 影像文件');
+filePath = fullfile(filePath, fileName);
+[imageData, R] = geotiffread(filePath);
+
+
+[rows, cols, numBands] = size(imageData);
+
+
+bands = cell(1, numBands);
+
+
+for b = 1:numBands
+    bandName = sprintf('band%d', b);
+    bandData = double(imageData(:,:,b));
+    assignin('base', bandName, bandData);
+    bands{b} = bandData;
+    disp(['波段 ', num2str(b), ' 已保存为变量 ', bandName]);
+end
+
+
+Red = bands{4}; 
+G = bands{3};
+B = bands{2}; 
+NIR = bands{5};
+REDGE1 = bands{6};
+REDGE2 = bands{7};
+
+EXG = 2 * G - Red - B;
+assignin('base', 'EXG', EXG);
+disp('EXG 已计算并保存为变量 EXG');
+
+
+VARI = (G - Red) ./ (G + Red - B);
+assignin('base', 'VARI', VARI);
+disp('EXG 已计算并保存为变量 VARI');
+
+
+NGRD = (G - Red) ./ (G + Red);
+assignin('base', 'NGRD', NGRD);
+disp('NGRD 已计算并保存为变量 NGRD');
+
+NGBD = (G - B) ./ (G + B);
+assignin('base', 'NGBD', NGBD);
+disp('NGBD 已计算并保存为变量 NGBD');
+
+
+GRRI = G ./ Red;
+assignin('base', 'GRRI', GRRI);
+disp('NGRD 已计算并保存为变量 GRRI');
+
+RGBV = (G .* G - Red .* B) ./ (G .* G + Red .* B);
+assignin('base', 'RGBV', RGBV);
+disp('RGBV 已计算并保存为变量 RGBV');
+
+
+MGRV = (G .* G - Red .* Red) ./ (G .* G + Red .* Red);
+assignin('base', 'MGRV', MGRV);
+disp('MGRV 已计算并保存为变量 MGRV');
+
+
+SR = NIR ./ Red;
+assignin('base', 'SR', SR);
+disp('SR 已计算并保存为变量 SR');
+
+
+RVI = Red ./ NIR;
+assignin('base', 'RVI', RVI);
+disp('RVI 已计算并保存为变量 RVI');
+
+REND1 = (NIR - REDGE1) ./ (NIR + REDGE1);
+assignin('base', 'REND1', REND1);
+disp('REND1 已计算并保存为变量 REND1');
+
+
+REND2 = (NIR - REDGE2) ./ (NIR + REDGE2);
+assignin('base', 'REND2', REND2);
+disp('REND2 已计算并保存为变量 REND2');
+
+
+MSAVI = 0.5 * ((2 * NIR + 1) - sqrt((2 * NIR + 1) .^2 - 8 * (NIR - Red)));
+assignin('base', 'MSAVI', MSAVI);
+disp('MSAVI 已计算并保存为变量 MSAVI');
+
+MSR = ((NIR ./ Red) - 1) ./ sqrt((NIR ./ Red) + 1);
+assignin('base', 'MSR', MSR);
+disp('MSR 已计算并保存为变量 MSR');
+
+GNDV = (NIR - G) ./ (NIR + G);
+assignin('base', 'GNDV', GNDV);
+disp('GNDV 已计算并保存为变量 GNDV');
+
+RDVI = (NIR - Red) ./ sqrt(NIR + Red);
+assignin('base', 'RDVI', RDVI);
+disp('RDVI 已计算并保存为变量 RDVI');
+
+OSAV = 1.16 * (NIR - Red) ./ (NIR + Red + 0.16);
+assignin('base', 'OSAV', OSAV);
+disp('OSAV 已计算并保存为变量 OSAV');
+
+EVI = 2.5 * (NIR - Red) ./ (NIR + 6 * Red - 7.5 * B + 1);
+assignin('base', 'EVI', EVI);
+disp('EVI 已计算并保存为变量 EVI');
+
+DVI = NIR - Red;
+assignin('base', 'DVI', DVI);
+disp('DVI 已计算并保存为变量 DVI');
+
+
+ARI1 = 1 ./ G - 1 ./ REDGE1;
+assignin('base', 'ARI1', ARI1);
+disp('ARI1 已计算并保存为变量 ARI1');
+
+
+ARI2 = 1 ./ G - 1 ./ REDGE2;
+assignin('base', 'ARI2', ARI2);
+disp('ARI2 已计算并保存为变量 ARI2');
+
+
+NDVI = (NIR - Red) ./ (NIR + Red);
+assignin('base', 'NDVI', NDVI);
+disp('NDVI 已计算并保存为变量 NDVI');
+
+
+VREI1 = NIR ./ REDGE1;
+assignin('base', 'VREI1', VREI1);
+disp('VREI1 已计算并保存为变量 VREI1');
+
+
+VREI2 = NIR ./ REDGE2;
+assignin('base', 'VREI2', VREI2);
+disp('VREI2 已计算并保存为变量 VREI2');
+
+refFilename = 'C:\Users\Lenovo\Desktop\scitwo\Landsat8\landsat20220820.tif';
+info = geotiffinfo(refFilename);
+outputFilename = 'C:\Users\Lenovo\Desktop\scitwo\Landsat8\EXG.tif';
+geotiffwrite(outputFilename, EXG, info.RefMatrix, ...
+    'GeoKeyDirectoryTag', info.GeoTIFFTags.GeoKeyDirectoryTag);
+outputFilename = 'C:\Users\Lenovo\Desktop\scitwo\Landsat8\VARI.tif';
+geotiffwrite(outputFilename, VARI, info.RefMatrix, ...
+    'GeoKeyDirectoryTag', info.GeoTIFFTags.GeoKeyDirectoryTag);
+outputFilename = 'C:\Users\Lenovo\Desktop\scitwo\Landsat8\NGRD.tif';
+geotiffwrite(outputFilename, NGRD, info.RefMatrix, ...
+    'GeoKeyDirectoryTag', info.GeoTIFFTags.GeoKeyDirectoryTag);
+outputFilename = 'C:\Users\Lenovo\Desktop\scitwo\Landsat8\NGBD.tif';
+geotiffwrite(outputFilename, NGBD, info.RefMatrix, ...
+    'GeoKeyDirectoryTag', info.GeoTIFFTags.GeoKeyDirectoryTag);
+outputFilename = 'C:\Users\Lenovo\Desktop\scitwo\Landsat8\GRRI.tif';
+geotiffwrite(outputFilename, GRRI, info.RefMatrix, ...
+    'GeoKeyDirectoryTag', info.GeoTIFFTags.GeoKeyDirectoryTag);
+outputFilename = 'C:\Users\Lenovo\Desktop\scitwo\Landsat8\RGBV.tif';
+geotiffwrite(outputFilename, RGBV, info.RefMatrix, ...
+    'GeoKeyDirectoryTag', info.GeoTIFFTags.GeoKeyDirectoryTag);
+outputFilename = 'C:\Users\Lenovo\Desktop\scitwo\Landsat8\MGRV.tif';
+geotiffwrite(outputFilename, MGRV, info.RefMatrix, ...
+    'GeoKeyDirectoryTag', info.GeoTIFFTags.GeoKeyDirectoryTag);
+outputFilename = 'C:\Users\Lenovo\Desktop\scitwo\Landsat8\SR.tif';
+geotiffwrite(outputFilename, SR, info.RefMatrix, ...
+    'GeoKeyDirectoryTag', info.GeoTIFFTags.GeoKeyDirectoryTag);
+outputFilename = 'C:\Users\Lenovo\Desktop\scitwo\Landsat8\RVI.tif';
+geotiffwrite(outputFilename, RVI, info.RefMatrix, ...
+    'GeoKeyDirectoryTag', info.GeoTIFFTags.GeoKeyDirectoryTag);
+outputFilename = 'C:\Users\Lenovo\Desktop\scitwo\Landsat8\REND1.tif';
+geotiffwrite(outputFilename, REND1, info.RefMatrix, ...
+    'GeoKeyDirectoryTag', info.GeoTIFFTags.GeoKeyDirectoryTag);
+outputFilename = 'C:\Users\Lenovo\Desktop\scitwo\Landsat8\REND2.tif';
+geotiffwrite(outputFilename, REND2, info.RefMatrix, ...
+    'GeoKeyDirectoryTag', info.GeoTIFFTags.GeoKeyDirectoryTag);
+outputFilename = 'C:\Users\Lenovo\Desktop\scitwo\Landsat8\MSAVI.tif';
+geotiffwrite(outputFilename, MSAVI, info.RefMatrix, ...
+    'GeoKeyDirectoryTag', info.GeoTIFFTags.GeoKeyDirectoryTag);
+outputFilename = 'C:\Users\Lenovo\Desktop\scitwo\Landsat8\MSR.tif';
+geotiffwrite(outputFilename, MSR, info.RefMatrix, ...
+    'GeoKeyDirectoryTag', info.GeoTIFFTags.GeoKeyDirectoryTag);
+outputFilename = 'C:\Users\Lenovo\Desktop\scitwo\Landsat8\GNDV.tif';
+geotiffwrite(outputFilename, GNDV, info.RefMatrix, ...
+    'GeoKeyDirectoryTag', info.GeoTIFFTags.GeoKeyDirectoryTag);
+outputFilename = 'C:\Users\Lenovo\Desktop\scitwo\Landsat8\RDVI.tif';
+geotiffwrite(outputFilename, RDVI, info.RefMatrix, ...
+    'GeoKeyDirectoryTag', info.GeoTIFFTags.GeoKeyDirectoryTag);
+outputFilename = 'C:\Users\Lenovo\Desktop\scitwo\Landsat8\OSAV.tif';
+geotiffwrite(outputFilename, OSAV, info.RefMatrix, ...
+    'GeoKeyDirectoryTag', info.GeoTIFFTags.GeoKeyDirectoryTag);
+outputFilename = 'C:\Users\Lenovo\Desktop\scitwo\Landsat8\EVI.tif';
+geotiffwrite(outputFilename, EVI, info.RefMatrix, ...
+    'GeoKeyDirectoryTag', info.GeoTIFFTags.GeoKeyDirectoryTag);
+outputFilename = 'C:\Users\Lenovo\Desktop\scitwo\Landsat8\DVI.tif';
+geotiffwrite(outputFilename, DVI, info.RefMatrix, ...
+    'GeoKeyDirectoryTag', info.GeoTIFFTags.GeoKeyDirectoryTag);
+outputFilename = 'C:\Users\Lenovo\Desktop\scitwo\Landsat8\ARI1.tif';
+geotiffwrite(outputFilename, ARI1, info.RefMatrix, ...
+    'GeoKeyDirectoryTag', info.GeoTIFFTags.GeoKeyDirectoryTag);
+outputFilename = 'C:\Users\Lenovo\Desktop\scitwo\Landsat8\ARI2.tif';
+geotiffwrite(outputFilename, ARI2, info.RefMatrix, ...
+    'GeoKeyDirectoryTag', info.GeoTIFFTags.GeoKeyDirectoryTag);
+outputFilename = 'C:\Users\Lenovo\Desktop\scitwo\Landsat8\NDVI.tif';
+geotiffwrite(outputFilename, NDVI, info.RefMatrix, ...
+    'GeoKeyDirectoryTag', info.GeoTIFFTags.GeoKeyDirectoryTag);
+outputFilename = 'C:\Users\Lenovo\Desktop\scitwo\Landsat8\VREI1.tif';
+geotiffwrite(outputFilename, VREI1, info.RefMatrix, ...
+    'GeoKeyDirectoryTag', info.GeoTIFFTags.GeoKeyDirectoryTag);
+outputFilename = 'C:\Users\Lenovo\Desktop\scitwo\Landsat8\VREI2.tif';
+geotiffwrite(outputFilename, VREI2, info.RefMatrix, ...
+    'GeoKeyDirectoryTag', info.GeoTIFFTags.GeoKeyDirectoryTag);
+
+disp('所有植被指数已保存为 TIF 影像文件');

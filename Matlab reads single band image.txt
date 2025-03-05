@@ -1,0 +1,8 @@
+[fileName, filePath] = uigetfile('*.tif', '选择单波段 TIF 影像文件');
+filePath = fullfile(filePath, fileName);
+[imageData, R] = geotiffread(filePath);
+bandData = double(imageData);
+csvFileName = sprintf('%s.csv', fileName(1:end-4)); 
+csvwrite(csvFileName, bandData);
+
+disp(['影像数据已保存为CSV文件: ', csvFileName]);
