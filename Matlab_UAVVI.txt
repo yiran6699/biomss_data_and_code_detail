@@ -1,0 +1,120 @@
+
+[fileName, filePath] = uigetfile('*.tif', '选择 TIF 影像文件');
+filePath = fullfile(filePath, fileName);
+[imageData, R] = geotiffread(filePath);
+
+
+[rows, cols, numBands] = size(imageData);
+
+bands = cell(1, numBands);
+
+
+for b = 1:numBands
+    bandName = sprintf('band%d', b);
+    bandData = double(imageData(:,:,b));
+    assignin('base', bandName, bandData);
+    bands{b} = bandData;
+    disp(['波段 ', num2str(b), ' 已保存为变量 ', bandName]);
+end
+
+R = bands{1}; 
+G = bands{2};
+B = bands{3}; 
+NIR = bands{4};
+REDGE = bands{5};
+
+
+EXG = 2 * G - R - B;
+assignin('base', 'EXG', EXG);
+disp('EXG 已计算并保存为变量 EXG');
+
+VARI = (G - R) ./ (G + R - B);
+assignin('base', 'VARI', VARI);
+disp('EXG 已计算并保存为变量 VARI');
+
+
+NGRD = (G - R) ./ (G + R);
+assignin('base', 'NGRD', NGRD);
+disp('NGRD 已计算并保存为变量 NGRD');
+
+NGBD = (G - B) ./ (G + B);
+assignin('base', 'NGBD', NGBD);
+disp('NGBD 已计算并保存为变量 NGBD');
+
+
+GRRI = G ./ R;
+assignin('base', 'GRRI', GRRI);
+disp('NGRD 已计算并保存为变量 GRRI');
+
+RGBV = (G .* G - R .* B) ./ (G .* G + R .* B);
+assignin('base', 'RGBV', RGBV);
+disp('RGBV 已计算并保存为变量 RGBV');
+
+
+MGRV = (G .* G - R.* R) ./ (G .* G + R.* R);
+assignin('base', 'MGRV', MGRV);
+disp('MGRV 已计算并保存为变量 MGRV');
+
+
+SR = NIR ./ R;
+assignin('base', 'SR', SR);
+disp('SR 已计算并保存为变量 SR');
+
+
+RVI = R ./ NIR;
+assignin('base', 'RVI', RVI);
+disp('RVI 已计算并保存为变量 RVI');
+
+
+REND = (NIR - REDGE) ./ (NIR + REDGE);
+assignin('base', 'REND', REND);
+disp('REND 已计算并保存为变量 REND');
+
+MSAVI = 0.5 * ((2 * NIR + 1) - sqrt((2 * NIR + 1) .^2 - 8 * (NIR - R)));
+assignin('base', 'MSAVI', MSAVI);
+disp('MSAVI 已计算并保存为变量 MSAVI');
+
+
+MSR = ((NIR ./ R) - 1) ./ sqrt((NIR ./ R) + 1);
+assignin('base', 'MSR', MSR);
+disp('MSR 已计算并保存为变量 MSR');
+
+
+GNDV = (NIR - G) ./ (NIR + G);
+assignin('base', 'GNDV', GNDV);
+disp('GNDV 已计算并保存为变量 GNDV');
+
+
+RDVI = (NIR - R) ./ sqrt(NIR + R);
+assignin('base', 'RDVI', RDVI);
+disp('RDVI 已计算并保存为变量 RDVI');
+
+OSAV = 1.16 * (NIR - R) ./ (NIR + R + 0.16);
+assignin('base', 'OSAV', OSAV);
+disp('OSAV 已计算并保存为变量 OSAV');
+
+
+EVI = 2.5 * (NIR - R) ./ (NIR + 6 * R - 7.5 * B + 1);
+assignin('base', 'EVI', EVI);
+disp('EVI 已计算并保存为变量 EVI');
+
+
+DVI = NIR - R;
+assignin('base', 'DVI', DVI);
+disp('DVI 已计算并保存为变量 DVI');
+
+ARI = 1 ./ G - 1 ./ REDGE;
+assignin('base', 'ARI', ARI);
+disp('ARI 已计算并保存为变量 ARI');
+
+NDVI = (NIR - R) ./ (NIR + R);
+assignin('base', 'NDVI', NDVI);
+disp('NDVI 已计算并保存为变量 NDVI');
+
+VREI = NIR ./ REDGE;
+assignin('base', 'VREI', VREI);
+disp('VREI 已计算并保存为变量 VREI');
+
+
+disp(['影像尺寸：', num2str(rows), ' x ', num2str(cols)]);
+disp(['波段数量：', num2str(numBands)]);

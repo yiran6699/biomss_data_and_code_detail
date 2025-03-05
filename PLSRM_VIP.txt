@@ -1,0 +1,24 @@
+[XL, YL, XS, YS, beta, pctVar, mse, stats] = plsregress(xs, ys, 17);
+
+W = stats.W;
+
+[p, A] = size(W);
+
+SS_Y = sum(pctVar(2, :));
+
+VIP = zeros(p, 1);
+
+
+for j = 1:p
+    sum_wj = 0;
+    for k = 1:A
+        
+        SS_Yk = pctVar(2, k);
+        sum_wj = sum_wj + (SS_Yk / SS_Y) * W(j, k)^2;
+    end
+ 
+    VIP(j) = sqrt(p * sum_wj / sum(pctVar(2, 1:A)));
+end
+
+disp('VIP scores:');
+disp(VIP);

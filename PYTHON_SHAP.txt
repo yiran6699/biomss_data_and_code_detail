@@ -1,0 +1,23 @@
+import shap
+model = xgb.XGBRegressor(learning_rate=0.1, n_estimators=16, max_depth=6, min_child_weight=2, seed=0,
+                         subsample=0.8, colsample_bytree=0.8, gamma=0.02, reg_alpha=8, reg_lambda=3)
+explainer = shap.Explainer(model, x)
+shap_values = explainer.shap_values(x)
+shap.summary_plot(shap_values, x)
+
+
+fig = plt.figure(figsize=(5, 4), dpi=300)
+
+plt.rcParams['font.family'] = 'Arial'  
+plt.rcParams['font.size'] = 8  
+plt.rcParams['axes.labelweight'] = 'bold'  
+shap.plots.scatter(shap_values[:,"b5_landsat"],
+color=shap_values[:,"b5_landsat"])
+
+shap.plots.bar(shap_values,max_display=11)
+
+
+fig = plt.figure(figsize=(10, 8), dpi=300)
+explainer = shap.Explainer(model, x)
+shap_values = explainer(x[:1000])
+shap.plots.heatmap(shap_values,max_display=11)

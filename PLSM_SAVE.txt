@@ -1,0 +1,15 @@
+% Save the PLS model parameters to a structure
+plsModel.Xl = Xl;
+plsModel.Yl = Yl;
+plsModel.Xs = Xs;
+plsModel.Ys = Ys;
+plsModel.beta = beta;
+plsModel.pctVar = pctVar;
+plsModel.PLSmsep = PLSmsep;
+plsModel.x_mean = x_mean;
+plsModel.x_std = x_std;
+plsModel.y_mean = y_mean;
+plsModel.y_std = y_std;
+
+% Save the PLS model structure to a .mat file
+save('plsModel.mat', 'plsModel');
