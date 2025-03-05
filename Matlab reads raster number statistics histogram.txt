@@ -1,0 +1,19 @@
+
+imageData = imread('C:\Users\Lenovo\Desktop\scitwo\mapresult\ntotalbio22.tif');
+
+
+imageData = double(imageData(:));
+imageData(isnan(imageData)) = [];
+
+binEdges = 0:20:1500;
+
+[counts, binCenters] = histcounts(imageData, binEdges);
+
+binCenters = binEdges(1:end-1) + diff(binEdges)/2;
+
+dataToExport = [binCenters', counts'];
+
+filename = 'histogram_counts.csv';
+writematrix(dataToExport, filename);
+
+disp('Histogram data saved to CSV:');
