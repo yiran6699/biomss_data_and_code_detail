@@ -1,0 +1,4 @@
+The original drone image data is too large, and its compressed package is 56.2GB. 
+Therefore, it cannot be uploaded directly to GitHub. 
+I uploaded the original data to Baidu Cloud Disk, which can be downloaded through this link 
+(https://pan.baidu.com/s/1_SqXIv0BqJxQIX-ccxo1Vg?pwd=2pcd code: 2pcd).
